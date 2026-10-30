@@ -1,0 +1,13 @@
+{
+  "name": "web-meta-wilsoon-dev",
+  "private": true,
+  "type": "module",
+  "description": "Serves robots.txt, security.txt and humans.txt for every *.wilsoon.dev app from web_meta.sites in Neon.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "preview": "node --env-file=.env scripts/preview.js"
+  }
+}

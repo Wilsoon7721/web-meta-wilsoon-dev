@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web Metadata | Wilson Oon</title>
+  <meta name="description" content="Serves robots.txt, security.txt and humans.txt for every wilsoon.dev app." />
+  <meta property="og:title" content="Web Metadata | Wilson Oon" />
+  <meta property="og:description" content="Serves robots.txt, security.txt and humans.txt for every wilsoon.dev app." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: #0a0b0d;
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.012) 0px,
+        rgba(255, 255, 255, 0.012) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      color: #d4d4d4;
+      font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      font-size: 14px;
+    }
+    ::selection { background: rgba(240, 160, 60, 0.25); }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.75rem 0;
+      font-family: 'Inter', sans-serif;
+    }
+    header .brand {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+    header .tagline {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.2);
+      letter-spacing: 0.05em;
+      user-select: none;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem 0 4rem;
+    }
+
+    h1 {
+      font-size: clamp(1.3rem, 4vw, 1.7rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0 0 0.35rem;
+      color: #f2f2f2;
+    }
+    h1 .prompt { color: #f0a03c; margin-right: 0.5rem; }
+    .cursor {
+      display: inline-block;
+      width: 0.5em;
+      background: #f0a03c;
+      animation: blink 1.1s steps(1) infinite;
+      margin-left: 2px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    p.lede {
+      font-size: 13px;
+      color: #7a7f85;
+      max-width: 34rem;
+      margin: 0 0 2rem;
+      line-height: 1.75;
+      padding-left: 1.6rem;
+    }
+    p.lede a { color: #b8bcc0; text-decoration: none; border-bottom: 1px dashed #45494e; }
+    p.lede a:hover { color: #f0a03c; border-color: #f0a03c; }
+
+    p.lede code { font-family: inherit; color: #b8bcc0; }
+
+    ul.files {
+      list-style: none;
+      margin: 0;
+      padding-left: 1.6rem;
+      font-size: 13px;
+      line-height: 2;
+    }
+    ul.files a { color: #b8bcc0; text-decoration: none; }
+    ul.files a::before { content: "> "; color: #45494e; }
+    ul.files a:hover { color: #f0a03c; }
+    ul.files span { color: #4c5055; margin-left: 0.75rem; }
+
+    footer {
+      padding: 1.5rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      border-top: 1px solid #1a1c1f;
+      font-size: 11px;
+      color: #4c5055;
+    }
+    footer .links { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    footer a { color: inherit; text-decoration: none; }
+    footer a::before { content: "# "; color: #33373b; }
+    footer a:hover { color: #b8bcc0; }
+    footer a.status { color: #4a9e6f; }
+    footer a.status::before { color: #2e4d3a; }
+    footer .copy { color: #33373b; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">wilsoon.dev</div>
+      <div class="tagline">Web Metadata</div>
+    </header>
+
+    <main>
+      <h1><span class="prompt">$</span>web-meta.wilsoon.dev<span class="cursor">&nbsp;</span></h1>
+      <p class="lede">
+        One source for the <code>robots.txt</code>, <code>security.txt</code> and <code>humans.txt</code> of every app in the
+        <a href="https://wilsoon.dev">wilsoon.dev</a> ecosystem. Crawlers asking any subdomain end up here quietly - this page is for
+        whoever wandered in after them.
+      </p>
+      <ul class="files">
+        <li><a href="/robots.txt">robots.txt</a><span>RFC 9309</span></li>
+        <li><a href="/.well-known/security.txt">security.txt</a><span>RFC 9116</span></li>
+        <li><a href="/humans.txt">humans.txt</a><span>humanstxt.org</span></li>
+      </ul>
+    </main>
+
+    <footer>
+      <div class="links">
+        <a href="https://wilsoon.dev" target="_blank" rel="noreferrer">wilsoon.dev</a>
+        <a href="https://github.com/Wilsoon7721" target="_blank" rel="noreferrer">github</a>
+        <a href="https://status.wilsoon.dev" target="_blank" rel="noreferrer" class="status">system_status</a>
+      </div>
+      <div class="copy">© <span id="year"></span> wilsoon.dev</div>
+    </footer>
+  </div>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
