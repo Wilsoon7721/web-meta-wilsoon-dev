@@ -1,4 +1,4 @@
-import { absolutize, toList } from "./shared.js";
+import { absolutize, commentLines, toList } from "./shared.js";
 
 const KNOWN_FIELDS = [
   ["contact", "Contact"],
@@ -33,9 +33,13 @@ export function computeExpires(now = new Date()) {
 export function formatSecurity(config, { host, siteName, now }) {
   const fields = { ...config, canonical: config.canonical ?? `/.well-known/security.txt` };
   delete fields.expires;
+  delete fields.comments;
 
   const lines = [`# Host: ${host}`];
   if (siteName) lines.push(`# App Name: ${siteName}`);
+
+  const comments = commentLines(config.comments);
+  if (comments.length) lines.push("", ...comments);
   lines.push("");
 
   const emit = (key, label) => {

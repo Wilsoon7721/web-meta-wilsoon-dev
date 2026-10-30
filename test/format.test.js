@@ -119,3 +119,11 @@ test('humans: arbitrary sections, string lists, explicit Last update kept', () =
     ].join('\n')
   );
 });
+
+test('robots and security: comments print under the header, blank entries as a bare #', () => {
+  assert.equal(formatRobots({ comments: 'Line one\nLine two', groups: [{ user_agents: '*', allow: '/' }] }, ctx), '# Host: tools.wilsoon.dev\n# App Name: Wilsoon Tools\n\n# Line one\n# Line two\n\nUser-agent: *\nAllow: /\n');
+  assert.equal(
+    formatSecurity({ comments: ['Hi', '', 'Policy'], contact: 'mailto:a@wilsoon.dev' }, ctx),
+    '# Host: tools.wilsoon.dev\n# App Name: Wilsoon Tools\n\n# Hi\n#\n# Policy\n\nContact: mailto:a@wilsoon.dev\nExpires: 2027-04-29T00:00:00.000Z\nCanonical: https://tools.wilsoon.dev/.well-known/security.txt\n'
+  );
+});

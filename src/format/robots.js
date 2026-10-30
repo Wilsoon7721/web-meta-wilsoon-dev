@@ -1,16 +1,20 @@
-import { absolutize, toList } from "./shared.js";
+import { absolutize, commentLines, toList } from "./shared.js";
 
 /**
  * Follows RFC 9309 robots.txt
  * Config shape:
  * {
  *   "groups": [{ "user_agents": ["*"], "allow": ["/"], "disallow": ["/api/"], "crawl_delay": 10 }],
- *   "sitemaps": ["/sitemap.xml"]   // relative paths resolve against the requesting host
+ *   "sitemaps": ["/sitemap.xml"],  // relative paths resolve against the requesting host
+ *   "comments": ["Printed as # lines under the header"]
  * }
  */
 export function formatRobots(config, { host, siteName }) {
   const lines = [`# Host: ${host}`];
   if (siteName) lines.push(`# App Name: ${siteName}`);
+
+  const comments = commentLines(config.comments);
+  if (comments.length) lines.push("", ...comments);
 
   for (const group of Array.isArray(config.groups) ? config.groups : []) {
     const agents = toList(group.user_agents ?? group.user_agent);
