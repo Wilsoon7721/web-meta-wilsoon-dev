@@ -2,7 +2,8 @@
 
 Centralised platform that serves `robots.txt`, `security.txt` and `humans.txt` for every `*.wilsoon.dev` app.
 
-> [!NOTE] This is just one half of the application (the reader). I host the create/edit/delete portions in an internal app of mine, which is why it's not here. This specific app only covers the reading portion assuming a database is fully hooked up and ready with the `schema.sql` as defined.
+> [!NOTE]
+> This is just one half of the application (the reader). I host the create/edit/delete portions in an internal app of mine, which is why it's not here. This specific app only covers the reading portion assuming a database is fully hooked up and ready with the `schema.sql` as defined.
 
 ## Request flow
 
