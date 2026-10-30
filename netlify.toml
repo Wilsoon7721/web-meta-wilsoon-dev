@@ -1,5 +1,5 @@
 [build]
   publish = "public"
 
-[functions.meta]
-  region = "sin"
+# [functions.meta]
+#   region = "sin"
