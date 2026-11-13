@@ -2,6 +2,7 @@ import { fetchSiteRows } from "./db.js";
 import { formatHumans } from "./format/humans.js";
 import { formatRobots } from "./format/robots.js";
 import { formatSecurity } from "./format/security.js";
+import { findWebfingerEntry, formatWebfinger, normalizeResource } from "./format/webfinger.js";
 import { FILES, resolveConfig } from "./resolve.js";
 
 const FORMATTERS = { robots: formatRobots, security: formatSecurity, humans: formatHumans };
@@ -11,6 +12,7 @@ const PATH_TO_FILE = {
   "/humans.txt": "humans",
   "/security.txt": "security",
   "/.well-known/security.txt": "security",
+  "/.well-known/webfinger": "webfinger",
 };
 
 const CACHEABLE_HEADERS = {
@@ -19,6 +21,9 @@ const CACHEABLE_HEADERS = {
   "Vercel-CDN-Cache-Control": "no-store",
   "Netlify-CDN-Cache-Control": "no-store",
 };
+
+// RFC 7033 5: WebFinger responses must be readable cross-origin.
+const CORS_HEADERS = { "Access-Control-Allow-Origin": "*" };
 
 const HOSTNAME_LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
 
@@ -44,7 +49,34 @@ function text(body, status, headers = {}) {
 }
 
 /**
- * Handles GET/HEAD for robots.txt, security.txt and humans.txt.
+ * WebFinger (RFC 7033) for one host. Unlike the text files, `webfinger_config` never inherits from `default`:
+ * subjects are host-specific, so NULL and `{}` both mean "no resources" (404).
+ */
+async function handleWebfinger(request, url, host, fetchRows) {
+  const resource = normalizeResource(url.searchParams.get("resource"));
+  if (!resource) return text("Bad Request: missing or malformed resource parameter\n", 400, { ...CACHEABLE_HEADERS, ...CORS_HEADERS });
+
+  let rows;
+  try {
+    rows = await fetchRows(host);
+  } catch (err) {
+    console.error(`Failed to load web_meta.sites for ${host}:`, err);
+    return text("Service Unavailable\n", 503, { ...CORS_HEADERS, "Cache-Control": "no-store", "Retry-After": "60" });
+  }
+
+  const headers = { ...CACHEABLE_HEADERS, ...CORS_HEADERS, "Cache-Tag": `wm,wm-host-${host}` };
+  const match = findWebfingerEntry(rows.site?.webfinger_config, resource, host);
+  if (!match) return text("Not Found\n", 404, headers);
+
+  const body = formatWebfinger(match, { host, rels: url.searchParams.getAll("rel") });
+  return new Response(request.method === "HEAD" ? null : body, {
+    status: 200,
+    headers: { "Content-Type": "application/jrd+json; charset=utf-8", "X-Content-Type-Options": "nosniff", ...headers },
+  });
+}
+
+/**
+ * Handles GET/HEAD for robots.txt, security.txt, humans.txt and /.well-known/webfinger.
  * The file comes from `?file=` (set by the vercel.json rewrites) or the request path.
  * The host comes from `?origin=` (set by the Cloudflare redirect) or the request's own host.
  *
@@ -53,11 +85,14 @@ function text(body, status, headers = {}) {
  */
 export async function handle(request, { fetchRows = fetchSiteRows, now = new Date() } = {}) {
   const url = new URL(request.url);
-  const file = FILES[url.searchParams.get("file")] ? url.searchParams.get("file") : PATH_TO_FILE[url.pathname];
+  const param = url.searchParams.get("file");
+  const file = FILES[param] || param === "webfinger" ? param : PATH_TO_FILE[url.pathname];
   if (!file) return text("Not Found\n", 404, CACHEABLE_HEADERS);
 
   const host = normalizeOrigin(url.searchParams.get("origin") || url.hostname);
-  if (!isAllowedHost(host)) return text("Bad Request: origin is not a served host\n", 400, CACHEABLE_HEADERS);
+  if (!isAllowedHost(host)) return text("Bad Request: origin is not a served host\n", 400, { ...CACHEABLE_HEADERS, ...(file === "webfinger" ? CORS_HEADERS : {}) });
+
+  if (file === "webfinger") return handleWebfinger(request, url, host, fetchRows);
 
   let rows;
   try {

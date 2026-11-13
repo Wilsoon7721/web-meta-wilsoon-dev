@@ -3,6 +3,6 @@ import { handle } from '../../src/handler.js';
 export default (request) => handle(request);
 
 export const config = {
-  path: ['/robots.txt', '/humans.txt', '/security.txt', '/.well-known/security.txt'],
+  path: ['/robots.txt', '/humans.txt', '/security.txt', '/.well-known/security.txt', '/.well-known/webfinger'],
   method: ['GET', 'HEAD']
 };

@@ -37,7 +37,7 @@ export async function queryNeonDb(query, params = []) {
  * @returns {Promise<{ site: object | null, fallback: object | null }>}
  */
 export async function fetchSiteRows(hostname) {
-  const result = await queryNeonDb(`SELECT hostname, site_name, robots_config, security_config, humans_config, updated_at FROM web_meta.sites WHERE hostname = $1 OR hostname = 'default'`, [hostname]);
+  const result = await queryNeonDb(`SELECT hostname, site_name, robots_config, security_config, humans_config, webfinger_config, updated_at FROM web_meta.sites WHERE hostname = $1 OR hostname = 'default'`, [hostname]);
 
   return {
     site: result.rows.find((r) => r.hostname === hostname) || null,

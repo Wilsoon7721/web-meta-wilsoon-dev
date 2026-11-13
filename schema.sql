@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS "web_meta"."sites" (
 	"robots_config" jsonb DEFAULT '{}',
 	"security_config" jsonb DEFAULT '{}',
 	"humans_config" jsonb DEFAULT '{}',
+	-- WebFinger (RFC 7033) never inherits from `default`: NULL and '{}' both 404.
+	-- Shape: {"resources": {"acct:user@host": {"aliases": [...], "properties": {...}, "links": [{"rel": "...", "href": "..."}]}}}
+	"webfinger_config" jsonb DEFAULT NULL,
 	"created_at" timestamp with time zone DEFAULT now(),
 	"updated_at" timestamp with time zone DEFAULT now()
 );
@@ -20,3 +23,5 @@ INSERT INTO "web_meta"."sites" ("hostname", "site_name", "robots_config", "secur
 	'{"contact": ["mailto:security@example.com"]}',
 	'{"team": [{"Name": "Your Name"}], "site": {"Host": "https://example.com"}}'
 ) ON CONFLICT ("hostname") DO NOTHING;
+-- For databases created before WebFinger support.
+ALTER TABLE "web_meta"."sites" ADD COLUMN IF NOT EXISTS "webfinger_config" jsonb DEFAULT NULL;
